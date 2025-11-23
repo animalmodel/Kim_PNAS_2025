@@ -5,3 +5,7 @@ This repository contains the data and code associated with the manuscript by **K
 - **MATLAB** R2024b or later
 - **Simulink** v24.2 or later
 - **Optimization Toolbox** v24.2 or later
+
+# Executable Files for Simulation
+- **simHandMuscleSystem.m:** runs simulations to explore parameters that best match the measured muscle activity.
+- **simHandMuscleSystemVariation.m:** runs simulations with varying parameters and evaluates their effects (use this code after simHandMuscleSystem.m). 
