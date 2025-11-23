@@ -19,12 +19,6 @@ aGainRate = 0.5; % aGain is fiexed to be 0.5 times bGain
 triggerTime = 1;
 refTimePre  = (0:1/sampFreq:(triggerTime+emgFile(1,1)))';
 emgData.time = [refTimePre(1:end-1); (emgFile(:,1)+triggerTime)];
-figure
-subplot(2,1,1)
-plot(emgData.time(1:end-1))
-subplot(2,1,2)
-plot(diff(emgData.time))
-ylim([-1/sampFreq, 2/sampFreq]);
 emgRefFile = emgFile(:,2:end);
 emgRefPre  = repmat(emgRefFile(1,:), length(refTimePre)-1, 1);
 emgRef = [emgRefPre;emgRefFile];
@@ -33,8 +27,6 @@ for i=1:length(dataLabel)
     labelMat = strsplit(dataLabel{i});
     dataLabel{i} = labelMat{1};
 end
-
-dispEMG(emgData.time, emgRef, dataLabel);
 
 normalizeEMG=1;
 if(normalizeEMG)
@@ -50,7 +42,6 @@ if(normalizeEMG)
         emgRef(:,i) = emgRefMP(:,i)/max(emgRefMP(:,i));
         %--%
     end
-    dispEMG(emgData.time, emgRef, dataLabel);
 end
 
 doSim=1;
@@ -195,22 +186,6 @@ if(doSim)
 
         figure;
         subplot(3,1,1)
-        plot(refEMGTime, [refEMGData, motoNeuronData]);
-        legend('EMG','MotoNeuron');
-        subplot(3,1,2)
-        plot(refEMGTime, resultAngData);
-        legend('hand angle');
-        subplot(3,1,3)
-        plot(spTime, spPSimData);
-        legend('Set Point');
-        saveFig=1;
-        if(saveFig)
-            resultFigName = [outFigFolder '/resultFig' num2str(i,'%02d') '_' dataLabel{i+1}];
-            exportgraphics(gcf,[resultFigName '.png'],'Resolution',300);
-            exportgraphics(gcf,[resultFigName '.eps']);
-        end
-        figure;
-        subplot(3,1,1)
         plot(refEMGTime, [refEMGData/max(refEMGData), motoNeuronData/max(motoNeuronData)]);
         legend('EMG','MotoNeuron (Norm)');
         subplot(3,1,2)
@@ -219,10 +194,11 @@ if(doSim)
         subplot(3,1,3)
         plot(spTime, spPSimData);
         legend('Set Point');
+        saveFig = 1;
         if(saveFig)
             resultFigName = [outFigFolder '/resultFig' num2str(i,'%02d') '_' dataLabel{i+1}];
-            exportgraphics(gcf,[resultFigName 'Norm.png'],'Resolution',300);
-            exportgraphics(gcf,[resultFigName 'Norm.eps']);
+            exportgraphics(gcf,[resultFigName '.png'],'Resolution',300);
+            exportgraphics(gcf,[resultFigName '.eps']);
         end
         saveCSV=1;
         if(saveCSV)
@@ -287,18 +263,3 @@ spPattern.time = time;
 spPattern.signals.values =spData;
 end
 
-%%
-function dispEMG(time, emgRef, dataLabel)
-figure;
-for i=1:12
-    subplot(6,2,i)
-    plot(time, emgRef(:,i));
-    ylabel(dataLabel{i+1});
-end
-figure;
-for i=13:size(emgRef,2)
-    subplot(6,2,i-12)
-    plot(time, emgRef(:,i));
-    ylabel(dataLabel{i+1});
-end
-end
